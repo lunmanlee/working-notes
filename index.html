@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lun's Working Notes</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="directory">
+      <div class="brand">
+        <span class="mark">&gt;&lt;&gt;</span>
+        <span class="name">lun's working notes</span>
+        <button class="theme-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">☾</button>
+      </div>
+      <p class="dir-intro">Kia ora! Welcome to my garden of evergreen notes — planted, tended,
+        left to grow. Walk around; nothing here is finished.</p>
+      <p class="dir-section-label">§ recently tended</p>
+      <ul class="dir-list" id="dirList"></ul>
+    </aside>
+    <div class="stack-scroll" id="stackScroll">
+      <div class="stack" id="stack"></div>
+    </div>
+  </div>
+  <div class="preview" id="preview"></div>
+
+  <script src="notes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

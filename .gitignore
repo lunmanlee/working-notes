@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# local Claude Code workspace (settings, memory, caches)
+.claude/
+
+# BMAD method tooling & generated artifacts
+_bmad/
+_bmad-output/

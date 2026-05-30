@@ -1,0 +1,269 @@
+/* ============================================================
+   Lun's Working Notes — styled on the Lunathan design system.
+   Tokens live in tokens.css; build only against the semantic vars
+   (--bg, --fg, --accent, --line, --font-mono, --font-serif …).
+   Mono structure · editorial serif reading · warm paper · sumi ink.
+   ============================================================ */
+
+/* growth stages mapped onto the brand palette (no greens/browns exist
+   in this system): a maturity progression from muted → stamp blue →
+   seal red. statusColor() in app.js resolves var(--<stage>). */
+:root {
+  --seedling: var(--fg-muted);   /* nascent */
+  --budding:  var(--accent);     /* growing — indigo stamp */
+  --evergreen: var(--seal);      /* sealed/finished — hanko red, used rarely */
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  /* base type/colour come from tokens.css; only transitions added here */
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+}
+
+/* keyboard focus — visible for tab nav, silent for mouse */
+:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); border-radius: var(--radius-xs); }
+:focus:not(:focus-visible) { outline: none; }
+
+/* ---------- shell ---------- */
+.shell { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
+
+/* ---------- directory ---------- */
+.directory {
+  flex: 0 0 22rem;
+  border-right: 1px solid var(--line);
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-5) var(--space-8);
+  background: var(--bg);
+}
+.brand {
+  display: flex; align-items: baseline; gap: var(--space-3);
+  font-family: var(--font-mono); flex-wrap: wrap;
+}
+.brand .mark { color: var(--accent); font-weight: 600; letter-spacing: 0.05em; }
+.brand .name {
+  font-family: var(--font-mono); font-size: var(--text-md); font-weight: 600;
+  letter-spacing: 0.02em; color: var(--fg);
+}
+.theme-btn {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: var(--text-md); line-height: 1;
+  width: 1.6em; height: 1.6em; display: grid; place-items: center; padding: 0;
+  background: transparent; border: 1px solid var(--line-strong); color: var(--fg-muted);
+  border-radius: var(--radius-sm); cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+.theme-btn:active { transform: translateY(1px); }
+
+.dir-intro {
+  font-family: var(--font-serif); color: var(--fg-muted); font-size: var(--text-md);
+  line-height: var(--leading-body); margin: var(--space-5) 0 var(--space-6); max-width: none;
+}
+
+.dir-section-label {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--fg-faint); margin: 0 0 var(--space-4);
+}
+
+/* ---------- directory list (the website-kit "post" pattern) ---------- */
+.dir-list { list-style: none; margin: 0; padding: 0; }
+.dir-item {
+  border-bottom: 1px dotted var(--line);
+  transition: padding-left var(--dur-fast) var(--ease);
+}
+.dir-item:hover { padding-left: var(--space-2); }
+.dir-link {
+  display: block; text-decoration: none; color: inherit; cursor: pointer;
+  padding: var(--space-3) 0;
+}
+.dir-title {
+  display: block; font-family: var(--font-serif); font-size: var(--text-md);
+  line-height: var(--leading-snug); color: var(--fg);
+  transition: color var(--dur-fast) var(--ease);
+}
+.dir-item:hover .dir-title { color: var(--accent); }
+.dir-item[data-active="true"] .dir-title { color: var(--accent); }
+.dir-item[data-active="true"] { padding-left: var(--space-2); border-left: 2px solid var(--accent); }
+.dir-meta {
+  display: flex; align-items: center; gap: 0.5em; margin-top: var(--space-1);
+  font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.04em;
+  color: var(--fg-faint); text-transform: lowercase;
+}
+
+/* ---------- stack ---------- */
+.stack-scroll { flex: 1; height: 100%; overflow-x: auto; overflow-y: hidden; background: var(--bg); }
+.stack { display: flex; height: 100%; align-items: stretch; width: max-content; }
+.col {
+  flex: 0 0 var(--col-w); width: var(--col-w); height: 100%; overflow-y: auto;
+  /* reserve the vertical scrollbar gutter so a column gaining/losing its scrollbar
+     (which happens when the horizontal bar first appears and steals height) never
+     re-flows the text sideways — part of the 3rd-note jitter fix */
+  scrollbar-gutter: stable;
+  border-right: 1px solid var(--line);
+  padding: var(--space-7) var(--space-7) var(--space-9);
+  background: var(--bg);
+  opacity: 1;
+}
+/* only freshly-appended columns animate — existing ones never re-run it */
+.col[data-enter="true"] { animation: slidein var(--dur) var(--ease) both; }
+@keyframes slidein { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+.col[data-dim="true"] { opacity: 0.45; }
+.col[data-dim="true"]:hover { opacity: 1; }
+
+:root { --col-w: 34rem; }
+
+/* note header */
+.note-head { margin-bottom: var(--space-6); }
+.note-status {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--font-mono); font-size: var(--text-sm);
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--fg-muted); margin-bottom: var(--space-3); cursor: default;
+}
+.note h2 {
+  font-family: var(--font-serif); font-size: var(--text-2xl); font-weight: 500;
+  line-height: var(--leading-tight); letter-spacing: var(--tracking-tight);
+  margin: 0; color: var(--fg);
+}
+.note-dates {
+  font-family: var(--font-mono); color: var(--fg-faint); font-size: var(--text-xs);
+  letter-spacing: 0.04em; margin-top: var(--space-3);
+}
+
+/* ---------- status growth icons (the deliberate minimal-line exception) ---------- */
+.status-ico { display: inline-flex; align-items: center; justify-content: center; width: 1em; height: 1em; line-height: 0; flex: none; }
+.status-ico svg { width: 100%; height: 100%; overflow: visible; }
+.note-status .status-ico { font-size: var(--text-lg); }
+.dir-meta .status-ico { font-size: 1.05rem; position: relative; top: -.02em; }
+.preview .pv-status .status-ico { font-size: 1rem; }
+.backlinks .bl-host .status-ico { font-size: 1.1rem; position: relative; top: .14em; }
+.status-ico .leaf, .status-ico .bud, .status-ico .tier, .status-ico .stem, .status-ico .trunk { transition: transform var(--dur-slow) cubic-bezier(.34,1.56,.64,1); transform-box: view-box; }
+.ico-seedling .leaf-l { transform-origin: 12px 15px; }
+.ico-seedling .leaf-r { transform-origin: 12px 13px; }
+.ico-budding .bud { transform-origin: 12px 7.4px; }
+.ico-budding .leaf-l { transform-origin: 12px 16px; }
+.ico-evergreen { transform-origin: 50% 95%; }
+:is(.dir-item, .note-status, .bl-host):hover .ico-seedling .leaf-l { transform: rotate(-16deg) scale(1.1); }
+:is(.dir-item, .note-status, .bl-host):hover .ico-seedling .leaf-r { transform: rotate(16deg) scale(1.1); }
+:is(.dir-item, .note-status, .bl-host):hover .ico-budding .bud { transform: scale(1.3); }
+:is(.dir-item, .note-status, .bl-host):hover .ico-budding .leaf-l { transform: rotate(-14deg); }
+:is(.dir-item, .note-status, .bl-host):hover .ico-evergreen { animation: sway .85s var(--ease); }
+@keyframes sway { 0%,100% { transform: rotate(0); } 28% { transform: rotate(-8deg); } 62% { transform: rotate(6deg); } }
+@media (prefers-reduced-motion: reduce) { .status-ico * { transition: none !important; } .ico-evergreen { animation: none !important; } .col[data-enter] { animation: none !important; } }
+
+/* ---------- note body (editorial reading serif) ---------- */
+.note-body { font-family: var(--font-serif); font-size: var(--text-md); line-height: var(--leading-body); color: var(--fg); }
+.note-body p { margin: 0 0 var(--space-4); max-width: 64ch; }
+.note-body ol, .note-body ul { margin: 0 0 var(--space-4); padding-left: var(--space-5); }
+.note-body li { margin-bottom: var(--space-2); }
+.note-body a[data-note], .note-body a[href] {
+  color: var(--accent); text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-position: 0 1.08em; background-repeat: no-repeat; background-size: 100% 1px;
+  cursor: pointer; transition: color var(--dur-fast) var(--ease), background-size var(--dur-fast) var(--ease);
+}
+.note-body a[data-note]:hover, .note-body a[href]:hover {
+  color: var(--accent-hover); background-image: linear-gradient(var(--accent-hover), var(--accent-hover));
+  background-size: 100% 2px;
+}
+.note-body code {
+  font-family: var(--font-mono); font-size: 0.85em;
+  background: var(--accent-soft); padding: 0.1em 0.4em; border-radius: var(--radius-xs);
+}
+.note-body pre {
+  font-family: var(--font-mono); background: var(--bg-inset); border: 1px solid var(--line);
+  border-radius: var(--radius-md); padding: var(--space-4) var(--space-5);
+  overflow-x: auto; font-size: var(--text-sm); line-height: 1.65;
+}
+.note-body pre code { background: none; padding: 0; font-size: 1em; }
+
+/* inner markdown headings — title is the only h2; demote note headings to mono, quieter */
+.note-body h3, .note-body h4, .note-body h5, .note-body h6 {
+  font-family: var(--font-mono); color: var(--fg); line-height: var(--leading-snug);
+  margin: var(--space-6) 0 var(--space-3); letter-spacing: 0.01em; font-weight: 600;
+}
+.note-body h3 { font-size: var(--text-md); }
+.note-body h4 { font-size: var(--text-base); }
+.note-body h5, .note-body h6 {
+  font-size: var(--text-sm); color: var(--fg-muted);
+  text-transform: uppercase; letter-spacing: var(--tracking-label);
+}
+.note-body h3:first-child, .note-body h4:first-child { margin-top: 0; }
+.note-body ul ul, .note-body ol ol, .note-body ul ol, .note-body ol ul { margin: var(--space-2) 0; }
+.note-body blockquote {
+  font-family: var(--font-serif); font-style: italic; font-size: var(--text-lg);
+  border-left: 2px solid var(--accent); padding-left: var(--space-5);
+  margin: var(--space-6) 0; color: var(--fg);
+}
+
+/* unresolved wikilinks → quiet plain text (no dead links) */
+.note-body .wikilink-plain { color: inherit; }
+.embed-missing { color: var(--fg-faint); font-style: italic; font-size: 0.9em; }
+
+/* the closing fish divider on each note */
+.note-divider {
+  text-align: center; color: var(--fg-faint); font-family: var(--font-mono);
+  letter-spacing: 0.4em; margin: var(--space-8) 0 0; font-size: var(--text-sm);
+}
+
+/* ---------- backlinks ---------- */
+.backlinks { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--line); }
+.backlinks .lbl {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-faint);
+}
+.backlinks ul { list-style: none; margin: var(--space-4) 0 0; padding: 0; }
+.backlinks li { margin-bottom: var(--space-4); }
+.backlinks li.bl-host { display: flex; align-items: baseline; gap: var(--space-3); }
+.bl-host .bl-text { min-width: 0; }
+.backlinks .bl-title {
+  font-family: var(--font-serif); cursor: pointer; font-size: var(--text-md);
+  color: var(--accent); width: fit-content;
+  text-decoration: underline; text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px; text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease), text-decoration-thickness var(--dur-fast) var(--ease);
+}
+.backlinks .bl-title:hover { color: var(--accent-hover); text-decoration-color: var(--accent-hover); text-decoration-thickness: 2px; }
+.backlinks .bl-lede { font-family: var(--font-serif); color: var(--fg-faint); font-size: var(--text-base); font-style: italic; margin-top: var(--space-1); }
+
+/* ---------- close affordance ---------- */
+.col-close {
+  position: sticky; top: calc(-1 * var(--space-7)); float: right;
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) 0 0;
+  border: none; background: transparent; color: var(--fg-faint); cursor: pointer;
+  font-family: var(--font-mono); font-size: var(--text-md); line-height: 1; padding: var(--space-2);
+  transition: color var(--dur-fast) var(--ease);
+}
+.col-close:hover { color: var(--seal); }
+
+/* empty state — brand voice */
+.empty {
+  flex: 1; display: grid; place-items: center; color: var(--fg-faint);
+  font-family: var(--font-serif); font-style: italic; font-size: var(--text-md);
+}
+
+/* ---------- hover preview ---------- */
+.preview {
+  position: fixed; z-index: 50; width: 20rem; max-width: 70vw;
+  background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md); padding: var(--space-4); pointer-events: none;
+  opacity: 0; transform: translateY(4px); transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.preview[data-show="true"] { opacity: 1; transform: none; }
+.preview .pv-status {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+}
+.preview h4 { font-family: var(--font-serif); margin: 0 0 var(--space-1); font-size: var(--text-md); font-weight: 500; line-height: var(--leading-snug); color: var(--fg); }
+.preview p { margin: 0; font-family: var(--font-serif); color: var(--fg-muted); font-style: italic; line-height: var(--leading-snug); max-width: none; }
+
+/* ---------- scrollbars ---------- */
+::-webkit-scrollbar { height: 10px; width: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: var(--radius-sm); }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }

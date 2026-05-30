@@ -1,0 +1,184 @@
+/* ============================================================
+   LUNATHAN — Design tokens  (copied from the lunathan-design system)
+   Cream · Gray · Blue · Sumi ink. Wabi-sabi, nocturnal, editorial.
+   Mono-led type with an editorial reading serif.
+   Light + dark theming via [data-theme].
+   ============================================================ */
+
+/* ---- Fonts (CDN; swap for self-hosted in fonts/ if desired) ---- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap');
+
+:root {
+  /* ---------- Type families ---------- */
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  /* ---------- Type scale (1.25 / major third, mono-friendly) ---------- */
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md:   1.0625rem;
+  --text-lg:   1.375rem;
+  --text-xl:   1.875rem;
+  --text-2xl:  2.5rem;
+  --text-3xl:  3.375rem;
+  --text-4xl:  4.5rem;
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-body:  1.7;
+  --tracking-label: 0.14em;
+  --tracking-tight: -0.01em;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1: 0.25rem;  --space-2: 0.5rem;  --space-3: 0.75rem;
+  --space-4: 1rem;     --space-5: 1.5rem;  --space-6: 2rem;
+  --space-7: 3rem;     --space-8: 4rem;    --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* ---------- Radii (restrained — wabi-sabi, not bubbly) ---------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* ---------- Motion ---------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur: 240ms;
+  --dur-slow: 480ms;
+
+  /* ---------- Raw palette ---------- */
+  --cream-50:  #faf6ec;
+  --cream-100: #f4eee0;
+  --cream-200: #ece3d1;
+  --cream-300: #ddd0b8;
+
+  --gray-300: #b9b6ad;
+  --gray-400: #8d8b85;
+  --gray-500: #66645f;
+  --gray-600: #4a4945;
+
+  --ink-700: #2a2c31;
+  --ink-800: #1c1e24;
+  --ink-900: #14161c;
+  --ink-950: #0d0f15;
+
+  --blue-300: #9db6e6;
+  --blue-400: #7493d6;
+  --blue-500: #43618f;
+  --blue-600: #324a73;
+  --blue-700: #25375a;
+
+  --seal-500: #a8483a;
+}
+
+/* ---- LIGHT THEME (default) — Kindle/Kobo warm paper ---- */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg:        #efece5;
+  --bg-sunk:   #e5e1d8;
+  --bg-raised: #f6f4ef;
+  --bg-inset:  #fbf9f4;
+
+  --fg:        var(--ink-900);
+  --fg-muted:  var(--gray-500);
+  --fg-faint:  var(--gray-400);
+
+  --line:        rgba(20, 22, 28, 0.14);
+  --line-strong: rgba(20, 22, 28, 0.30);
+
+  --accent:        var(--blue-500);
+  --accent-hover:  var(--blue-600);
+  --accent-soft:   rgba(67, 97, 143, 0.12);
+  --on-accent:     var(--cream-50);
+
+  --seal: var(--seal-500);
+
+  --shadow-sm: 0 1px 2px rgba(20, 22, 28, 0.06);
+  --shadow-md: 0 4px 16px rgba(20, 22, 28, 0.08);
+}
+
+/* ---- DARK THEME — nocturnal blue-black, "Luna" ---- */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg:        #101012;
+  --bg-sunk:   #0c0c0e;
+  --bg-raised: #1f1f21;
+  --bg-inset:  #171719;
+
+  --fg:        #e9e3d4;
+  --fg-muted:  #9a978d;
+  --fg-faint:  #6d6b64;
+
+  --line:        rgba(233, 227, 212, 0.12);
+  --line-strong: rgba(233, 227, 212, 0.26);
+
+  --accent:        var(--blue-400);
+  --accent-hover:  var(--blue-300);
+  --accent-soft:   rgba(116, 147, 214, 0.16);
+  --on-accent:     var(--ink-950);
+
+  --seal: #c25d4d;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- SEMANTIC ELEMENT DEFAULTS ---- */
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+}
+h1, .display { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+
+.label, .eyebrow, h4, h5, h6 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.prose, .reading {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+}
+
+p { max-width: 68ch; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--accent-hover); }
+
+code, pre, .mono { font-family: var(--font-mono); }
+code {
+  font-size: 0.9em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-xs);
+}
+
+hr { border: none; border-top: 1px solid var(--line); margin: var(--space-6) 0; }
+
+::selection { background: var(--accent-soft); }
