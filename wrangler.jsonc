@@ -1,9 +1,0 @@
-{
-  // Cloudflare Workers static-assets config — serves the committed site files.
-  // No Worker script (assets-only); no build step (notes.js is built locally).
-  "name": "working-notes",
-  "compatibility_date": "2026-05-31",
-  "assets": {
-    "directory": "."
-  }
-}
