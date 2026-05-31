@@ -22,7 +22,7 @@ HTML/CSS/JS — no framework.
 ## Build & run
 
 ```bash
-node build.js                 # reads ~/Fruits/2-Notes, writes notes.js
+npm run build                 # = node build.js — reads ~/Fruits/2-Notes, writes notes.js
 NOTES_DIR=/some/other/dir node build.js   # use a different source folder
 
 # serve (any static server works):
@@ -30,6 +30,18 @@ python3 -m http.server 8137   # then open http://localhost:8137
 ```
 
 Opening `index.html` directly via `file://` also works (fonts need a connection).
+
+## Publishing
+
+The site is hosted on **Cloudflare Pages**, which auto-deploys on every push to
+`main`. Publishing is one command:
+
+```bash
+npm run publish               # build notes.js → commit → push (skips if nothing changed)
+```
+
+Building happens locally (the vault lives outside the repo), so the generated
+`notes.js` is committed and Cloudflare serves it with no build step of its own.
 
 ## Navigating & sharing
 
@@ -55,10 +67,16 @@ Re-run `node build.js` whenever you add or edit notes.
 
 ## Metadata the design needs (and where it comes from)
 
-Your notes have no front-matter, so two fields are **derived** at build time:
-
-- **Dates** — `planted` = file creation time, `tended` = file modified time.
+- **Dates** — `planted` comes from each note's `created` frontmatter, `tended` from
+  `updated` (or `modified`). These are the durable source of truth: they survive git
+  clones and file copies, unlike filesystem timestamps. Notes **without** that
+  frontmatter fall back to filesystem birthtime/mtime, so the build never breaks.
   "Recently tended" sorts the directory by `tended`.
+
+  The frontmatter is maintained automatically by the Obsidian **"Update time on edit"**
+  plugin (keys `created` / `updated`). Existing notes were seeded once with their real
+  file dates via `npm run backfill` (`node scripts/backfill-frontmatter.js` — idempotent,
+  supports `--dry-run`).
 - **Status** (`seedling → budding → evergreen`) — derived from how densely a note
   is linked *within this folder*: orphan → seedling, connected → budding, hub
   (≥4 links) → evergreen.

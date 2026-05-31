@@ -1,0 +1,11 @@
+{
+  "name": "working-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static notes-garden site. build.js ingests an Obsidian vault (~/Fruits/2-Notes) into notes.js.",
+  "scripts": {
+    "build": "node build.js",
+    "publish": "bash scripts/publish.sh",
+    "backfill": "node scripts/backfill-frontmatter.js"
+  }
+}

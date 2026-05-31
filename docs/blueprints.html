@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>working notes — blueprints</title>
+<link rel="stylesheet" href="lunathan-tokens.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0}
+  .app{max-width:1080px;margin:0 auto;padding:0 28px 100px}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:26px 0;border-bottom:1px solid var(--line);margin-bottom:30px}
+  .brand{display:flex;align-items:baseline;gap:11px;font-family:var(--font-mono)}
+  .brand .mark{color:var(--accent);font-weight:600;letter-spacing:.05em}
+  .brand .name{font-size:var(--text-md);font-weight:600}
+  .brand .tag{font-size:var(--text-xs);color:var(--fg-faint);letter-spacing:.14em;text-transform:uppercase}
+  .tg{font-family:var(--font-mono);font-size:var(--text-sm);background:none;border:1px solid var(--line-strong);color:var(--fg-muted);border-radius:var(--radius-sm);padding:.35em .7em;cursor:pointer}
+  .tg:hover{color:var(--accent);border-color:var(--accent)}
+
+  .head{margin-bottom:34px}
+  .head .eyebrow{color:var(--accent)}
+  .head h1{font-size:var(--text-2xl);margin:10px 0 8px}
+  .head p{font-family:var(--font-serif);color:var(--fg-muted);font-size:var(--text-md);margin:0;max-width:68ch}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .full{grid-column:1 / -1}
+  @media(max-width:780px){.grid{grid-template-columns:1fr}}
+  .panel{border:1px solid var(--line);border-radius:var(--radius-md);background:var(--bg-raised);overflow:hidden}
+  .panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .panel-head .ttl{display:flex;align-items:baseline;gap:10px}
+  .panel-head .step{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+  .panel-head h3{font-family:var(--font-serif);font-size:var(--text-lg);margin:0}
+  .panel-head .cap{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-faint);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .panel .note{font-family:var(--font-serif);font-size:var(--text-base);color:var(--fg-muted);margin:0;padding:14px 20px 0;max-width:none}
+  .diagram{position:relative;padding:22px 24px 26px;display:flex;justify-content:center;align-items:center;min-height:180px;cursor:zoom-in}
+  .mermaid{font-family:var(--font-mono)!important}
+  .mermaid svg{max-width:100%;height:auto}
+  .expand-pill{position:absolute;top:10px;right:12px;font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-muted);background:var(--bg);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:.28em .6em;cursor:zoom-in;opacity:0;transition:opacity var(--dur) var(--ease)}
+  .panel:hover .expand-pill,.expand-pill:focus-visible{opacity:1}
+  .foot{margin-top:34px;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-faint);text-align:center}
+
+  /* ---- lightbox / expanded viewer ---- */
+  .lightbox{position:fixed;inset:0;z-index:1000;display:none;flex-direction:column;background:var(--bg)}
+  .lightbox.open{display:flex}
+  .lb-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--bg-raised)}
+  .lb-title{font-family:var(--font-serif);font-size:var(--text-lg)}
+  .lb-actions{display:flex;gap:8px}
+  .lb-actions button{font-family:var(--font-mono);font-size:var(--text-sm);background:none;border:1px solid var(--line-strong);color:var(--fg-muted);border-radius:var(--radius-sm);padding:.35em .7em;cursor:pointer;min-width:40px}
+  .lb-actions button:hover{color:var(--accent);border-color:var(--accent)}
+  .lb-viewport{flex:1;overflow:hidden;position:relative;cursor:grab;touch-action:none;user-select:none}
+  .lb-viewport.grabbing{cursor:grabbing}
+  .lb-stage{position:absolute;top:0;left:0;transform-origin:0 0}
+  .lb-stage svg{display:block}
+  .lb-hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-faint);letter-spacing:.06em;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><span class="mark">&gt;&lt;&gt;</span><span class="name">working notes</span><span class="tag">blueprints · obsidian → live</span></div>
+    <button class="tg" id="tg">☾ dark</button>
+  </div>
+
+  <header class="head">
+    <p class="eyebrow">≈ blueprints · may 2026</p>
+    <h1 class="display">Publish pipeline — the blueprints.</h1>
+    <p>What we're building: a one-command path from an Obsidian note to the live site, with
+      created / modified dates that live in the note itself so they never drift. Each panel
+      below maps to a step in the plan. Toggle ☾ to read them on warm paper or at night.</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- ===== Overview: the whole system ===== -->
+    <div class="panel full">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">overview</span><h3>System context</h3></div>
+        <span class="cap">C4 · context</span>
+      </div>
+      <p class="note">The actors and the boundary. I write notes in Obsidian; the site is a static
+        garden served to readers. Obsidian, GitHub and Cloudflare are the external pieces we wire together.</p>
+      <div class="diagram"><pre class="mermaid" data-id="ctx">
+C4Context
+  title System Context — Working Notes
+  Person(author, "Me", "Writes evergreen notes")
+  Person(reader, "Reader", "Browses the garden")
+  System(site, "Working Notes", "Static notes garden — stacking links, growth status, backlinks")
+  System_Ext(obsidian, "Obsidian vault", "~/Fruits/2-Notes — markdown + frontmatter")
+  System_Ext(gh, "GitHub", "lunmanlee/working-notes")
+  System_Ext(cf, "Cloudflare Pages", "Static hosting + CDN")
+  Rel(author, obsidian, "Writes / edits notes in")
+  Rel(author, site, "Runs `npm run publish`")
+  Rel(site, gh, "Commits + pushes to")
+  Rel(gh, cf, "Auto-deploys on push")
+  Rel(reader, cf, "Reads", "HTTPS")
+      </pre></div>
+    </div>
+
+    <!-- ===== Step 4: architecture / what's committed ===== -->
+    <div class="panel full">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">step 4</span><h3>Containers &amp; data flow</h3></div>
+        <span class="cap">C4 · container</span>
+      </div>
+      <p class="note">The moving parts and what gets committed. The vault stays outside the repo;
+        <code>build.js</code> reads it and emits <code>notes.js</code>, which is committed alongside the
+        static shell so Cloudflare can serve it with no build step of its own.</p>
+      <div class="diagram"><pre class="mermaid" data-id="cont">
+C4Container
+  title Containers — Working Notes publish pipeline
+  Person(author, "Me")
+  System_Boundary(local, "Local machine") {
+    Container(plugin, "Update time on edit", "Obsidian plugin", "Stamps created / updated frontmatter")
+    ContainerDb(vault, "Vault notes", "Markdown + YAML", "~/Fruits/2-Notes/*.md")
+    Container(build, "build.js", "Node", "Parses frontmatter, renders MD, derives dates")
+    ContainerDb(notesjs, "notes.js", "Generated JS", "Note data + helpers — committed")
+    Container(shell, "Static shell", "HTML / CSS / JS", "index.html, app.js, styles.css, tokens.css")
+  }
+  System_Ext(gh, "GitHub repo", "git")
+  System_Ext(cf, "Cloudflare Pages", "Static host / CDN")
+  Person(reader, "Reader")
+  Rel(author, plugin, "Edits trigger")
+  Rel(plugin, vault, "Maintains dates in")
+  Rel(build, vault, "Reads", "fs")
+  Rel(build, notesjs, "Writes")
+  Rel(notesjs, gh, "Committed with shell")
+  Rel(shell, gh, "Committed to")
+  Rel(gh, cf, "Push deploys")
+  Rel(reader, cf, "Loads site")
+      </pre></div>
+    </div>
+
+    <!-- ===== Data model: the note record ===== -->
+    <div class="panel full">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">data model</span><h3>The note record</h3></div>
+        <span class="cap">entity relationship</span>
+      </div>
+      <p class="note">The shape <code>build.js</code> emits into <code>notes.js</code> for each note.
+        Frontmatter <code>created</code> / <code>updated</code> source <code>planted</code> / <code>tended</code>;
+        in-folder wikilinks form a self-referential graph that yields backlinks and the status heuristic.</p>
+      <div class="diagram"><pre class="mermaid" data-id="er">
+erDiagram
+  NOTE ||--o{ NOTE : "wikilinks to / backlinked from"
+  FRONTMATTER ||--|| NOTE : "sources dates for"
+  NOTE {
+    string id "slug, derived from filename"
+    string title "from filename"
+    string status "seedling, budding or evergreen"
+    date planted "= created"
+    date tended "= updated"
+    string lede "first-sentence preview"
+    html body "rendered from markdown"
+    string backlinks "ids of notes linking here"
+  }
+  FRONTMATTER {
+    date created "→ planted"
+    date updated "→ tended"
+  }
+      </pre></div>
+    </div>
+
+    <!-- ===== Step 1: build.js frontmatter + dates ===== -->
+    <div class="panel full">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">step 1</span><h3>build.js — frontmatter &amp; dates</h3></div>
+        <span class="cap">flowchart</span>
+      </div>
+      <p class="note">Each note is split into frontmatter and body. Dates come from
+        <code>created</code> / <code>updated</code> when present, falling back to filesystem stats so the
+        build never breaks. The <code>---</code> block is stripped before rendering.</p>
+      <div class="diagram"><pre class="mermaid" data-id="build">
+flowchart TD
+  A[/"note.md"/] --> B{"has frontmatter?"}
+  B -->|yes| C[parseFrontmatter]
+  B -->|no| D[whole file is body]
+  C --> E["data: created, updated"]
+  C --> F["body without ---"]
+  D --> F
+  E --> G{"date present?"}
+  G -->|yes| H["toYMD → planted / tended"]
+  G -->|no| I[("fs.statSync(file) → birthtime / mtime")]
+  I --> H
+  F --> J["renderMarkdown → HTML"]
+  H --> K["clamp planted ≤ tended"]
+  J --> L[note record]
+  K --> L
+  L --> M[["notes.js"]]
+      </pre></div>
+    </div>
+
+    <!-- ===== Step 2: backfill migration ===== -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">step 2</span><h3>Backfill migration</h3></div>
+        <span class="cap">flowchart</span>
+      </div>
+      <p class="note">One-time, idempotent. Seeds the 26 existing notes with their real file
+        dates as frontmatter so the plugin doesn't reset them to today.</p>
+      <div class="diagram"><pre class="mermaid" data-id="backfill">
+flowchart TD
+  S(["for each *.md in vault"]) --> H{"already has created:?"}
+  H -->|yes| K[skip — leave as is]
+  H -->|no| R[("fs.statSync(file) → birthtime / mtime")]
+  R --> C["clamp + fmtDate"]
+  C --> P["prepend created / updated block"]
+  P --> W[write note back]
+  K --> N([next file])
+  W --> N
+      </pre></div>
+    </div>
+
+    <!-- ===== Step 6: note + metadata lifecycle ===== -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">durability</span><h3>Note lifecycle</h3></div>
+        <span class="cap">state</span>
+      </div>
+      <p class="note">Dates ride inside the note, so a clone on any machine rebuilds the
+        same dates. Growth status is independent and displayed, not a gate.</p>
+      <div class="diagram"><pre class="mermaid" data-id="life">
+stateDiagram-v2
+  [*] --> Draft: new note
+  Draft --> Stamped: plugin writes created + updated
+  Stamped --> Edited: I edit it
+  Edited --> Stamped: updated bumped
+  Stamped --> Published: npm run publish
+  Published --> Cloned: git clone elsewhere
+  Cloned --> Stamped: dates intact (from frontmatter)
+  Published --> [*]
+      </pre></div>
+    </div>
+
+    <!-- ===== Step 3: publish flow ===== -->
+    <div class="panel full">
+      <div class="panel-head">
+        <div class="ttl"><span class="step">step 3</span><h3>npm run publish</h3></div>
+        <span class="cap">sequence</span>
+      </div>
+      <p class="note">The one command. Build, then commit + push only if something changed;
+        Cloudflare picks up the push and deploys. Live in ~30s.</p>
+      <div class="diagram"><pre class="mermaid" data-id="publish">
+sequenceDiagram
+  autonumber
+  actor Me
+  participant N as npm / publish.sh
+  participant B as build.js
+  participant V as Vault
+  participant G as git → GitHub
+  participant C as Cloudflare Pages
+  Me->>N: npm run publish
+  N->>B: node build.js
+  B->>V: read *.md (+ frontmatter)
+  V-->>B: notes
+  B-->>N: notes.js written
+  N->>N: any git changes?
+  alt changes exist
+    N->>G: add · commit "notes: YYYY-MM-DD" · push
+    G->>C: webhook (push to main)
+    C->>C: deploy static files
+    C-->>Me: live at *.pages.dev (~30s)
+  else nothing changed
+    N-->>Me: "nothing to publish"
+  end
+      </pre></div>
+    </div>
+
+  </div>
+
+  <div class="foot">≈ &gt;&lt;&gt; ≈ &nbsp; blueprints for the working-notes publish pipeline</div>
+</div>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lb-bar">
+    <span class="lb-title" id="lbTitle">diagram</span>
+    <div class="lb-actions">
+      <button id="zOut" title="Zoom out">−</button>
+      <button id="zIn" title="Zoom in">+</button>
+      <button id="zReset" title="Fit to screen">fit</button>
+      <button id="lbClose" title="Close (esc)">✕ close</button>
+    </div>
+  </div>
+  <div class="lb-viewport" id="lbViewport">
+    <div class="lb-stage" id="lbStage"></div>
+    <div class="lb-hint">scroll to zoom · drag to pan · esc to close</div>
+  </div>
+</div>
+
+<script>
+  const SRC = new Map();
+  document.querySelectorAll('.mermaid').forEach(el => SRC.set(el.dataset.id, el.textContent));
+
+  function themeVars(dark){
+    return dark ? {
+      background:'#101012', mainBkg:'#1f1f21', secondaryColor:'#25375a', tertiaryColor:'#171719',
+      primaryColor:'#1f1f21', primaryBorderColor:'#7493d6', primaryTextColor:'#e9e3d4',
+      secondaryBorderColor:'#9a978d', tertiaryBorderColor:'rgba(233,227,212,.2)',
+      lineColor:'#9a978d', textColor:'#e9e3d4', titleColor:'#e9e3d4',
+      nodeBorder:'#7493d6', clusterBkg:'#171719', clusterBorder:'rgba(233,227,212,.16)',
+      edgeLabelBackground:'#101012', labelBackground:'#101012',
+      noteBkgColor:'#25375a', noteTextColor:'#e9e3d4', noteBorderColor:'#7493d6',
+      fontFamily:"'IBM Plex Mono', monospace"
+    } : {
+      background:'#efece5', mainBkg:'#f6f4ef', secondaryColor:'#dbe4f2', tertiaryColor:'#fbf9f4',
+      primaryColor:'#f6f4ef', primaryBorderColor:'#43618f', primaryTextColor:'#14161c',
+      secondaryBorderColor:'#66645f', tertiaryBorderColor:'rgba(20,22,28,.18)',
+      lineColor:'#66645f', textColor:'#14161c', titleColor:'#14161c',
+      nodeBorder:'#43618f', clusterBkg:'#fbf9f4', clusterBorder:'rgba(20,22,28,.14)',
+      edgeLabelBackground:'#efece5', labelBackground:'#efece5',
+      noteBkgColor:'#dbe4f2', noteTextColor:'#14161c', noteBorderColor:'#43618f',
+      fontFamily:"'IBM Plex Mono', monospace"
+    };
+  }
+
+  async function renderAll(dark){
+    mermaid.initialize({
+      startOnLoad:false, theme:'base', themeVariables:themeVars(dark),
+      securityLevel:'loose', flowchart:{curve:'basis', htmlLabels:true},
+      sequence:{ mirrorActors:false }
+    });
+    const els = [...document.querySelectorAll('.mermaid')];
+    els.forEach(el => { el.removeAttribute('data-processed'); el.innerHTML = SRC.get(el.dataset.id); });
+    try { await mermaid.run({ nodes: els }); } catch(e) { console.warn('mermaid', e); }
+  }
+
+  const root = document.documentElement;
+  const tg = document.getElementById('tg');
+  function setTheme(t){
+    root.dataset.theme = t;
+    tg.textContent = t === 'dark' ? '☀ light' : '☾ dark';
+    localStorage.setItem('lunathan-theme', t);
+    renderAll(t === 'dark');
+  }
+  tg.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+  setTheme(localStorage.getItem('lunathan-theme') || 'light');
+
+  /* ---- expand / pan-zoom lightbox ---- */
+  const lb = document.getElementById('lightbox');
+  const lbStage = document.getElementById('lbStage');
+  const lbViewport = document.getElementById('lbViewport');
+  const lbTitle = document.getElementById('lbTitle');
+  let scale = 1, tx = 0, ty = 0;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const applyT = () => { lbStage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; };
+
+  function fit(svg){
+    const vb = svg.viewBox && svg.viewBox.baseVal;
+    const bb = svg.getBoundingClientRect();
+    const w = (vb && vb.width) ? vb.width : bb.width;
+    const h = (vb && vb.height) ? vb.height : bb.height;
+    return { w, h };
+  }
+
+  function openLb(svg, title){
+    lbStage.innerHTML = '';
+    const { w, h } = fit(svg);
+    const clone = svg.cloneNode(true);
+    clone.removeAttribute('width'); clone.removeAttribute('height');
+    clone.style.maxWidth = 'none'; clone.style.width = w + 'px'; clone.style.height = h + 'px';
+    lbStage.appendChild(clone);
+    lbTitle.textContent = title || 'diagram';
+    lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+    fitToView(w, h);
+  }
+  function fitToView(w, h){
+    const r = lbViewport.getBoundingClientRect();
+    scale = clamp(Math.min(r.width / w, r.height / h) * 0.92, 0.1, 12) || 1;
+    tx = (r.width - w * scale) / 2;
+    ty = (r.height - h * scale) / 2;
+    applyT();
+  }
+  function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); lbStage.innerHTML = ''; }
+
+  function zoomAt(cx, cy, factor){
+    const ns = clamp(scale * factor, 0.1, 16);
+    tx = cx - (cx - tx) * (ns / scale);
+    ty = cy - (cy - ty) * (ns / scale);
+    scale = ns; applyT();
+  }
+
+  lbViewport.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = lbViewport.getBoundingClientRect();
+    zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.12 : 0.89);
+  }, { passive: false });
+
+  let drag = false, lx = 0, ly = 0;
+  lbViewport.addEventListener('pointerdown', e => { drag = true; lx = e.clientX; ly = e.clientY; lbViewport.classList.add('grabbing'); lbViewport.setPointerCapture(e.pointerId); });
+  lbViewport.addEventListener('pointermove', e => { if (!drag) return; tx += e.clientX - lx; ty += e.clientY - ly; lx = e.clientX; ly = e.clientY; applyT(); });
+  const endDrag = () => { drag = false; lbViewport.classList.remove('grabbing'); };
+  lbViewport.addEventListener('pointerup', endDrag);
+  lbViewport.addEventListener('pointercancel', endDrag);
+
+  const centerZoom = f => { const r = lbViewport.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, f); };
+  document.getElementById('zIn').addEventListener('click', () => centerZoom(1.25));
+  document.getElementById('zOut').addEventListener('click', () => centerZoom(0.8));
+  document.getElementById('zReset').addEventListener('click', () => { const svg = lbStage.querySelector('svg'); if (svg) { const { w, h } = fit(svg); fitToView(w, h); } });
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && lb.classList.contains('open')) closeLb(); });
+
+  /* attach expand to every panel (the .diagram wrapper persists across theme re-renders) */
+  document.querySelectorAll('.panel').forEach(panel => {
+    const diagram = panel.querySelector('.diagram');
+    if (!diagram) return;
+    const title = (panel.querySelector('h3') || {}).textContent || 'diagram';
+    const open = () => { const svg = diagram.querySelector('svg'); if (svg) openLb(svg, title); };
+    const pill = document.createElement('button');
+    pill.className = 'expand-pill'; pill.type = 'button'; pill.textContent = '⤢ expand';
+    pill.addEventListener('click', e => { e.stopPropagation(); open(); });
+    diagram.appendChild(pill);
+    diagram.addEventListener('click', e => { if (e.target.closest('.expand-pill')) return; open(); });
+  });
+</script>
+</body>
+</html>
