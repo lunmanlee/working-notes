@@ -20,17 +20,37 @@
   themeBtn.onclick = () =>
     applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
 
-  function statusColor(s) { return `var(--${s})`; }
-
-  // growth-stage icons: seedling = sprout, budding = bud on a stem, evergreen = little tree
-  const ICO = {
-    seedling: `<path class="stem" d="M12 21 V12"/><path class="leaf leaf-l" d="M12 14.5 C8.3 14.5 6.3 11.8 6.3 8.6 C10 8.6 12 11.1 12 14.5 Z"/><path class="leaf leaf-r" d="M12 12.6 C15.7 12.6 17.7 9.9 17.7 6.7 C14 6.7 12 9.2 12 12.6 Z"/>`,
-    budding: `<path class="stem" d="M12 21 V10"/><path class="leaf leaf-l" d="M12 16 C8.4 16 6.6 13.4 6.6 10.4 C10.2 10.4 12 12.8 12 16 Z"/><circle class="bud" cx="12" cy="7.4" r="3.1"/>`,
-    evergreen: `<path class="trunk" d="M12 21.5 V18.5"/><path class="tier" d="M12 3.5 L8 9.5 H16 Z"/><path class="tier" d="M12 8 L6.6 14.5 H17.4 Z"/><path class="tier" d="M12 12.5 L5.4 19 H18.6 Z"/>`
+  // note maturity marks — a minimal line set that grows with the thinking:
+  // seedling (leaves unfurl) → budding (bud swells, accent bloom) → evergreen
+  // (fir sprig that sways, seal-red berries). currentColor, 1.5px non-scaling
+  // stroke; the settle gesture plays on hover (see styles.css).
+  const MARK = {
+    seedling: { cls: "m-seed", body:
+      `<path class="stem" d="M24 38 C24 33 24 29 24 25"></path>`
+      + `<path class="leaf l" d="M24 25 C19 26 13.5 23.5 14.5 17.5 C19.5 17.5 23 20 24 25 Z"></path>`
+      + `<path class="leaf r" d="M24 25 C29 26 34.5 23.5 33.5 17.5 C28.5 17.5 25 20 24 25 Z"></path>` },
+    budding: { cls: "m-bud", body:
+      `<path class="stem" d="M24 40 V18"></path>`
+      + `<path class="leaf l" d="M24 30 C20 31 15.5 29 16.5 24 C20.5 24 23 26.5 24 30 Z"></path>`
+      + `<path class="leaf r" d="M24 30 C28 31 32.5 29 31.5 24 C27.5 24 25 26.5 24 30 Z"></path>`
+      + `<path class="bloom" d="M24 18 C21.8 16 22.2 12.2 24 10 C25.8 12.2 26.2 16 24 18 Z"></path>`
+      + `<path class="bud" d="M24 18 C21.8 16 22.2 12.2 24 10 C25.8 12.2 26.2 16 24 18 Z"></path>` },
+    evergreen: { cls: "m-ever", body:
+      `<g class="sprig"><path d="M24 41 V12"></path>`
+      + `<path d="M24 13 L20 17"></path><path d="M24 13 L28 17"></path>`
+      + `<path d="M24 19 L18.5 24"></path><path d="M24 19 L29.5 24"></path>`
+      + `<path d="M24 25 L16.5 31"></path><path d="M24 25 L31.5 31"></path>`
+      + `<path d="M24 31 L15 38"></path><path d="M24 31 L33 38"></path>`
+      + `<circle class="berry l" cx="19" cy="22" r="1.9"></circle>`
+      + `<circle class="berry r" cx="29" cy="26" r="1.9"></circle></g>` }
   };
   function statusIcon(status) {
-    return `<span class="status-ico ico-${status}" style="color:${statusColor(status)}" aria-hidden="true">`
-      + `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICO[status]}</svg></span>`;
+    const m = MARK[status]; if (!m) return "";
+    // viewBox cropped tight around the artwork (paths are still drawn in the
+    // original 48-unit space) so the mark fills its box instead of floating in
+    // empty padding. transform-origins in styles.css are re-based by (7,9) to match.
+    return `<span class="status-ico ${m.cls}" aria-hidden="true">`
+      + `<svg viewBox="7 9 34 34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${m.body}</svg></span>`;
   }
 
   // a plain left-click (no modifier) drives in-page navigation; modified / middle
